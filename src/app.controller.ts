@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { RequireLogin, RequirePermission, UserInfo } from './custom.decorator';
 
@@ -14,12 +14,12 @@ export class AppController {
   @Get('aaa')
   @RequireLogin()
   @RequirePermission('ddd')
-  aaaa(@UserInfo('username') username: string) {
+  aaaa(@UserInfo('username') username: string, @UserInfo() UserInfo) {
     return username;
   }
 
   @Get('bbb')
-  bbb(@Query() a: string) {
+  bbb() {
     return 'bbb';
   }
 }
