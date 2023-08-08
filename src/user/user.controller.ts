@@ -22,14 +22,13 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
-import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { LoginUserVo } from './vo/login-user.vo';
-import { UserDetailVo } from './vo/user-info.vo';
-import { RefreshTokenVo } from './vo/refresh-token.vo';
-import { UserListVo } from './vo/user-list.vo';
+import {
+  RegisterUserDto,
+  LoginUserDto,
+  UpdateUserPasswordDto,
+  UpdateUserDto,
+} from './dto';
+import { LoginUserVo, UserDetailVo, RefreshTokenVo, UserListVo } from './vo';
 import { UserService } from './user.service';
 import { EmailService } from '../email/email.service';
 import { User } from './entities/user.entity';
@@ -442,7 +441,7 @@ export class UserController {
     return '发送成功';
   }
 
-  //  冻结用户
+  // 冻结用户
   @ApiBearerAuth()
   @ApiQuery({
     name: 'id',

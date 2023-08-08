@@ -7,11 +7,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
-import { LoginUserDto } from './dto/login-user.dto';
-import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { LoginUserVo } from './vo/login-user.vo';
-import { UserListVo } from './vo/user-list.vo';
+import { LoginUserDto, UpdateUserPasswordDto, UpdateUserDto } from './dto';
+import { LoginUserVo, UserListVo } from './vo';
 import { User } from './entities/user.entity';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
