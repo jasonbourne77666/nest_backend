@@ -9,6 +9,7 @@ import {
   HttpStatus,
   ValidationPipe,
   UnauthorizedException,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -25,7 +26,7 @@ import { EmailService } from '../email/email.service';
 import { User } from './entities/user.entity';
 import { RedisService } from '../redis/redis.service';
 import { RequireLogin, UserInfo } from '../custom.decorator';
-import { md5 } from '../utils';
+import { md5, generateParseIntPipe } from '../utils';
 
 @Controller('user')
 export class UserController {
@@ -296,6 +297,37 @@ export class UserController {
       html: `<p>你的更改密码验证码是 ${code}</p>`,
     });
     return '发送成功';
+  }
+
+  //  冻结用户
+  @Get('freeze')
+  async freeze(@Query('id') userId: number) {
+    await this.userService.freezeUserById(userId);
+    return 'success';
+  }
+
+  // 用户列表
+  @Get('list')
+  async list(
+    @Query('pageNo', new DefaultValuePipe(1), generateParseIntPipe('pageNo'))
+    pageNo: number,
+    @Query(
+      'pageSize',
+      new DefaultValuePipe(2),
+      generateParseIntPipe('pageSize'),
+    )
+    pageSize: number,
+    @Query('username') username: string,
+    @Query('nickName') nickName: string,
+    @Query('email') email: string,
+  ) {
+    return await this.userService.findUsers(
+      username,
+      nickName,
+      email,
+      pageNo,
+      pageSize,
+    );
   }
 
   // 初始化数据
