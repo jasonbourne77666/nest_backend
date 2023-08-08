@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { FormatResponseInterceptor } from './format-response.interceptor';
@@ -11,7 +11,17 @@ async function bootstrap() {
 
   app.setGlobalPrefix('/api');
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (errors) => {
+        if (errors.length && errors[0]) {
+          const { property = '', constraints = {} } = errors[0] || {};
+          const msg = Object.values(constraints)?.[0];
+          throw new HttpException(`${property} ${msg}`, HttpStatus.BAD_REQUEST);
+        }
+      },
+    }),
+  );
 
   app.useGlobalInterceptors(new FormatResponseInterceptor());
   app.useGlobalInterceptors(new InvokeRecordInterceptor());
