@@ -16,10 +16,15 @@ import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserVo } from './vo/login-user.vo';
+import { UserDetailVo } from './vo/user-info.vo';
 import { UserService } from './user.service';
 import { EmailService } from '../email/email.service';
 import { User } from './entities/user.entity';
 import { RedisService } from '../redis/redis.service';
+import { RequireLogin, UserInfo } from '../custom.decorator';
 import { md5 } from '../utils';
 
 @Controller('user')
@@ -42,15 +47,14 @@ export class UserController {
   @Inject(ConfigService)
   private configService: ConfigService;
 
-  @Post('login')
-  async userLogin(@Body() loginUser: LoginUserDto) {
-    const vo = await this.userService.login(loginUser, false);
-    vo.accessToken = this.jwtService.sign(
+  // 组装登录信息
+  loginVo(loginUser: LoginUserVo) {
+    loginUser.accessToken = this.jwtService.sign(
       {
-        userId: vo.userInfo.id,
-        username: vo.userInfo.username,
-        roles: vo.userInfo.roles,
-        permissions: vo.userInfo.permissions,
+        userId: loginUser.userInfo.id,
+        username: loginUser.userInfo.username,
+        roles: loginUser.userInfo.roles,
+        permissions: loginUser.userInfo.permissions,
       },
       {
         expiresIn:
@@ -58,44 +62,31 @@ export class UserController {
       },
     );
 
-    vo.refreshToken = this.jwtService.sign(
+    loginUser.refreshToken = this.jwtService.sign(
       {
-        userId: vo.userInfo.id,
+        userId: loginUser.userInfo.id,
       },
       {
         expiresIn:
           this.configService.get('jwt_refresh_token_expres_time') || '7d',
       },
     );
-    return vo;
+
+    return loginUser;
+  }
+
+  @Post('login')
+  async userLogin(@Body() loginUser: LoginUserDto) {
+    const vo = await this.userService.login(loginUser, false);
+    const res = this.loginVo(vo);
+    return res;
   }
 
   @Post('admin/login')
   async adminLogin(@Body() loginUser: LoginUserDto) {
     const vo = await this.userService.login(loginUser, true);
-    vo.accessToken = this.jwtService.sign(
-      {
-        userId: vo.userInfo.id,
-        username: vo.userInfo.username,
-        roles: vo.userInfo.roles,
-        permissions: vo.userInfo.permissions,
-      },
-      {
-        expiresIn:
-          this.configService.get('jwt_access_token_expires_time') || '30m',
-      },
-    );
-
-    vo.refreshToken = this.jwtService.sign(
-      {
-        userId: vo.userInfo.id,
-      },
-      {
-        expiresIn:
-          this.configService.get('jwt_refresh_token_expres_time') || '7d',
-      },
-    );
-    return vo;
+    const res = this.loginVo(vo);
+    return res;
   }
 
   @Get('refresh')
@@ -179,7 +170,6 @@ export class UserController {
   // 注册
   @Post('register')
   async register(@Body(ValidationPipe) user: RegisterUserDto) {
-    console.log('req', user);
     const captcha = await this.redisService.get(`captcha_${user.email}`);
 
     if (!captcha) {
@@ -229,6 +219,81 @@ export class UserController {
       to: address,
       subject: '注册验证码',
       html: `<p>你的注册验证码是 ${code}</p>`,
+    });
+    return '发送成功';
+  }
+
+  // userInfo
+  @Get('info')
+  @RequireLogin()
+  async info(@UserInfo('userId') userId: number) {
+    const user = await this.userService.findUserDetailById(userId);
+
+    const vo = new UserDetailVo();
+    // 过滤返回的数据
+    vo.id = user.id;
+    vo.email = user.email;
+    vo.username = user.username;
+    vo.headPic = user.headPic;
+    vo.phoneNumber = user.phoneNumber;
+    vo.nickName = user.nickName;
+    vo.createTime = user.createTime;
+    vo.isFrozen = user.isFrozen;
+    return vo;
+  }
+
+  // 修改个人信息
+  @Post(['update', 'admin/update'])
+  @RequireLogin()
+  async update(
+    @UserInfo('userId') userId: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return await this.userService.update(userId, updateUserDto);
+  }
+
+  @Get('update/captcha')
+  async updateCaptcha(@Query('address') address: string) {
+    const code = Math.random().toString().slice(2, 8);
+
+    await this.redisService.set(
+      `update_user_captcha_${address}`,
+      code,
+      10 * 60,
+    );
+
+    await this.emailService.sendMail({
+      to: address,
+      subject: '更改用户信息验证码',
+      html: `<p>你的验证码是 ${code}</p>`,
+    });
+    return '发送成功';
+  }
+
+  // 修改密码
+  @Post(['update_password', 'admin/update_password'])
+  @RequireLogin()
+  async updatePassword(
+    @UserInfo('userId') userId: number,
+    @Body() passwordDto: UpdateUserPasswordDto,
+  ) {
+    return await this.userService.updatePassword(userId, passwordDto);
+  }
+
+  @Get('update_password/captcha')
+  async updatePasswordCaptcha(@Query('address') address: string) {
+    const code = Math.random().toString().slice(2, 8);
+
+    await this.redisService.set(
+      `update_password_captcha_${address}`,
+      code,
+      10 * 60,
+    );
+
+    await this.emailService.sendMail({
+      to: address,
+      subject: '更改密码验证码',
+      html: `<p>你的更改密码验证码是 ${code}</p>`,
     });
     return '发送成功';
   }
