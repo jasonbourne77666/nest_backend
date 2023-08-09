@@ -57,9 +57,9 @@ export class User {
 
   @Column({
     comment: '是否冻结',
-    default: false,
+    default: 0,
   })
-  isFrozen: boolean;
+  isFrozen: number;
 
   @Column({
     comment: '是否是管理员',

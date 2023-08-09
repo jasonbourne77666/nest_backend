@@ -17,7 +17,7 @@ class User {
   phoneNumber: string;
 
   @ApiProperty()
-  isFrozen: boolean;
+  isFrozen: number;
 
   @ApiProperty()
   headPic: string;
@@ -30,8 +30,14 @@ export class UserListVo {
   @ApiProperty({
     type: [User],
   })
-  users: User[];
+  list: User[];
 
   @ApiProperty()
   totalCount: number;
+
+  @ApiProperty()
+  pageNo: number;
+
+  @ApiProperty()
+  pageSize: number;
 }

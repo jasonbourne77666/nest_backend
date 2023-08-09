@@ -6,7 +6,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, Between } from 'typeorm';
 import {
   LoginUserDto,
   UpdateUserPasswordDto,
@@ -230,7 +230,7 @@ export class UserService {
       id,
     });
 
-    user.isFrozen = true;
+    user.isFrozen = 1;
 
     await this.userRepository.save(user);
   }
@@ -241,6 +241,9 @@ export class UserService {
     email: string,
     pageNo: number,
     pageSize: number,
+    isFrozen: string,
+    startTime: string,
+    endTime: string,
   ) {
     const skipCount = (pageNo - 1) * pageSize;
 
@@ -254,6 +257,12 @@ export class UserService {
     }
     if (email) {
       condition.email = Like(`%${email}%`);
+    }
+    if (isFrozen) {
+      condition.isFrozen = isFrozen === 'true';
+    }
+    if (startTime) {
+      condition.createTime = Between(startTime, endTime);
     }
 
     const [users, totalCount] = await this.userRepository.findAndCount({
@@ -274,8 +283,10 @@ export class UserService {
 
     const vo = new UserListVo();
 
-    vo.users = users;
+    vo.list = users;
     vo.totalCount = totalCount;
+    vo.pageNo = pageNo;
+    vo.pageSize = pageSize;
     return vo;
   }
 

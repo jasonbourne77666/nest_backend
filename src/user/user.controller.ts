@@ -568,6 +568,9 @@ export class UserController {
     @Query('username') username: string,
     @Query('nickName') nickName: string,
     @Query('email') email: string,
+    @Query('isFrozen') isFrozen: string,
+    @Query('startTime') startTime: string,
+    @Query('endTime') endTime: string,
   ) {
     return await this.userService.findUsers(
       username,
@@ -575,6 +578,9 @@ export class UserController {
       email,
       pageNo,
       pageSize,
+      isFrozen,
+      startTime,
+      endTime,
     );
   }
 
