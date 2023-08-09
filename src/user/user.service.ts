@@ -7,7 +7,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
-import { LoginUserDto, UpdateUserPasswordDto, UpdateUserDto } from './dto';
+import {
+  LoginUserDto,
+  UpdateUserPasswordDto,
+  UpdateUserDto,
+  EmailLoginUserDto,
+} from './dto';
 import { LoginUserVo, UserListVo } from './vo';
 import { User } from './entities/user.entity';
 import { Role } from './entities/role.entity';
@@ -39,7 +44,7 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: {
         username: loginUserDto.username,
-        isAdmin,
+        // isAdmin,
       },
       relations: ['roles', 'roles.permissions'],
     });
@@ -54,7 +59,45 @@ export class UserService {
 
     const vo = new LoginUserVo();
 
-    vo.userInfo = {
+    vo.userInfo = this.getLoginVo(user);
+
+    return vo;
+  }
+
+  async emailLogin(loginUserDto: EmailLoginUserDto) {
+    const captcha = await this.redisService.get(
+      `login_user_captcha_${loginUserDto.email}`,
+    );
+
+    if (!captcha) {
+      throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
+    }
+
+    if (loginUserDto.code !== captcha) {
+      throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.userRepository.findOne({
+      where: {
+        email: loginUserDto.email,
+      },
+      relations: ['roles', 'roles.permissions'],
+    });
+
+    if (!user) {
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
+    }
+
+    const vo = new LoginUserVo();
+
+    vo.userInfo = this.getLoginVo(user);
+
+    return vo;
+  }
+
+  // 登录返回数据
+  getLoginVo = (user: User) => {
+    return {
       id: user.id,
       username: user.username,
       nickName: user.nickName,
@@ -68,22 +111,19 @@ export class UserService {
       permissions: user.roles.reduce((arr, item) => {
         item.permissions.forEach((permission) => {
           if (arr.indexOf(permission) === -1) {
-            console.log('permission', permission);
             arr.push(permission);
           }
         });
         return arr;
       }, []),
     };
+  };
 
-    return vo;
-  }
-
-  async findUserById(userId: number, isAdmin: boolean) {
+  async findUserById(userId: number, isAdmin?: boolean) {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
-        isAdmin,
+        // isAdmin,
       },
       relations: ['roles', 'roles.permissions'],
     });
@@ -101,18 +141,24 @@ export class UserService {
         });
         return arr;
       }, []),
+      headPic: user.headPic,
+      isFrozen: user.isFrozen,
+      email: user.email,
+      nickName: user.nickName,
+      phoneNumber: user.phoneNumber,
+      createTime: user.createTime,
     };
   }
 
-  async findUserDetailById(userId: number) {
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userId,
-      },
-    });
+  // async findUserDetailById(userId: number) {
+  //   const user = await this.userRepository.findOne({
+  //     where: {
+  //       id: userId,
+  //     },
+  //   });
 
-    return user;
-  }
+  //   return user;
+  // }
 
   // 修改密码
   async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {

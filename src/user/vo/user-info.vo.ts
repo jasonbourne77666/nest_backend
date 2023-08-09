@@ -24,4 +24,10 @@ export class UserDetailVo {
 
   @ApiProperty()
   createTime: Date;
+
+  @ApiProperty({ example: ['管理员'] })
+  roles: string[];
+
+  @ApiProperty({ example: 'query_aaa' })
+  permissions: string[];
 }

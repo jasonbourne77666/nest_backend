@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   UnauthorizedException,
   DefaultValuePipe,
+  Req,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -22,11 +23,13 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
+import { Request } from 'express';
 import {
   RegisterUserDto,
   LoginUserDto,
   UpdateUserPasswordDto,
   UpdateUserDto,
+  EmailLoginUserDto,
 } from './dto';
 import { LoginUserVo, UserDetailVo, RefreshTokenVo, UserListVo } from './vo';
 import { UserService } from './user.service';
@@ -123,6 +126,65 @@ export class UserController {
     const vo = await this.userService.login(loginUser, true);
     const res = this.loginVo(vo);
     return res;
+  }
+
+  @ApiBody({
+    type: EmailLoginUserDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: '用户不存在/密码错误',
+    type: String,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '用户信息和 token',
+    type: LoginUserVo,
+  })
+  @Post('login-email')
+  async emailLogin(@Body() loginUser: EmailLoginUserDto) {
+    const vo = await this.userService.emailLogin(loginUser);
+    const res = this.loginVo(vo);
+    return res;
+  }
+
+  @ApiQuery({
+    name: 'address',
+    type: String,
+    description: '邮箱地址',
+    required: true,
+    example: 'xxx@xx.com',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '发送成功',
+    type: String,
+  })
+  @Get('login-captcha')
+  async loginCaptcha(@Query('address') address: string) {
+    const code = Math.random().toString().slice(2, 8);
+
+    await this.redisService.set(`login_user_captcha_${address}`, code, 10 * 60);
+
+    await this.emailService.sendMail({
+      to: address,
+      subject: '登录验证码',
+      html: `<p>你的验证码是 ${code}</p>`,
+    });
+    return '发送成功';
+  }
+
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'success',
+    type: String,
+  })
+  @RequireLogin()
+  @Post('outLogin')
+  async outLogin(@Req() req: Request) {
+    req.user = null;
+    return '退出登录成功';
   }
 
   @ApiQuery({
@@ -326,7 +388,7 @@ export class UserController {
   @Get('info')
   @RequireLogin()
   async info(@UserInfo('userId') userId: number) {
-    const user = await this.userService.findUserDetailById(userId);
+    const user = await this.userService.findUserById(userId);
 
     const vo = new UserDetailVo();
     // 过滤返回的数据
@@ -338,6 +400,8 @@ export class UserController {
     vo.nickName = user.nickName;
     vo.createTime = user.createTime;
     vo.isFrozen = user.isFrozen;
+    vo.roles = user.roles;
+    vo.permissions = user.permissions;
     return vo;
   }
 
