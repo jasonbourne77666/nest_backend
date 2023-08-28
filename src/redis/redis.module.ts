@@ -3,7 +3,7 @@ import { RedisService } from './redis.service';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from 'redis';
 
-@Global()
+@Global() // 全局模块
 @Module({
   providers: [
     RedisService,
