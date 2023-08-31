@@ -20,7 +20,7 @@ export class UserDetailVo {
   phoneNumber: string;
 
   @ApiProperty()
-  isFrozen: number;
+  isFrozen: string;
 
   @ApiProperty()
   createTime: Date;

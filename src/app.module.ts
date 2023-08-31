@@ -33,7 +33,7 @@ import { TaskModule } from './task/task.module';
           password: configService.get('mysql_server_password'),
           database: configService.get('mysql_server_database'),
           synchronize: true,
-          logging: true,
+          logging: false,
           entities: [User, Role, Permission, Article],
           poolSize: 10,
           connectorPackage: 'mysql2',
@@ -103,7 +103,7 @@ export class AppModule implements OnApplicationBootstrap {
     //   console.log('cron job');
     // });
     // this.schedulerRegistry.addCronJob('job1', job);
-    // job.start();
+    // job.start(); 手动触发
     // --------------------------------------
     // const intervals = this.schedulerRegistry.getIntervals;
     // 删除

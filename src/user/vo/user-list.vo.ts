@@ -17,7 +17,7 @@ class User {
   phoneNumber: string;
 
   @ApiProperty()
-  isFrozen: number;
+  isFrozen: string;
 
   @ApiProperty()
   headPic: string;

@@ -185,7 +185,7 @@ export class UserService {
       return '密码修改成功';
     } catch (e) {
       this.logger.error(e, UserService);
-      return '密码修改失败';
+      throw new HttpException('密码修改失败', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -207,6 +207,10 @@ export class UserService {
       id: userId,
     });
 
+    if (updateUserDto.username) {
+      foundUser.username = updateUserDto.username;
+    }
+
     if (updateUserDto.nickName) {
       foundUser.nickName = updateUserDto.nickName;
     }
@@ -220,7 +224,7 @@ export class UserService {
       return '用户信息修改成功';
     } catch (e) {
       this.logger.error(e, UserService);
-      return '用户信息修改成功';
+      throw new HttpException('修改失败', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -229,8 +233,11 @@ export class UserService {
     const user = await this.userRepository.findOneBy({
       id,
     });
-
-    user.isFrozen = 1;
+    if (user.isFrozen === '1') {
+      user.isFrozen = '0';
+    } else {
+      user.isFrozen = '1';
+    }
 
     await this.userRepository.save(user);
   }
@@ -259,7 +266,7 @@ export class UserService {
       condition.email = Like(`%${email}%`);
     }
     if (isFrozen) {
-      condition.isFrozen = isFrozen === 'true';
+      condition.isFrozen = isFrozen;
     }
     if (startTime) {
       condition.createTime = Between(startTime, endTime);
@@ -279,6 +286,7 @@ export class UserService {
       skip: skipCount,
       take: pageSize,
       where: condition,
+      relations: ['roles', 'roles.permissions'],
     });
 
     const vo = new UserListVo();

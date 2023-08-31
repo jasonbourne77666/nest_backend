@@ -19,6 +19,7 @@ export class User {
   @Column({
     length: 50,
     comment: '用户名',
+    unique: true,
   })
   username: string;
 
@@ -57,9 +58,9 @@ export class User {
 
   @Column({
     comment: '是否冻结',
-    default: 0,
+    default: '0',
   })
-  isFrozen: number;
+  isFrozen: string;
 
   @Column({
     comment: '是否是管理员',
