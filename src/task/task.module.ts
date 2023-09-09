@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { ArticleModule } from 'src/article/article.module';
+import { ArticleModule } from 'src/router/article/article.module';
 
 @Module({
   imports: [ArticleModule],

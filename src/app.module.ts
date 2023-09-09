@@ -8,17 +8,17 @@ import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { User } from './user/entities/user.entity';
-import { Role } from './user/entities/role.entity';
-import { Permission } from './user/entities/permission.entity';
-import { Article } from './article/entities/article.entity';
+import { UserModule } from './router/user/user.module';
+import { User } from './router/user/entities/user.entity';
+import { Role } from './router/user/entities/role.entity';
+import { Permission } from './router/user/entities/permission.entity';
+import { Article } from './router/article/entities/article.entity';
 import { RedisModule } from './redis/redis.module';
-import { EmailModule } from './email/email.module';
+import { EmailModule } from './router/email/email.module';
 // 守卫
 import { LoginGuard } from './login.guard';
 import { PermissionGuard } from './permission.guard';
-import { ArticleModule } from './article/article.module';
+import { ArticleModule } from './router/article/article.module';
 import { TaskModule } from './task/task.module';
 
 @Module({
