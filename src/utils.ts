@@ -14,3 +14,43 @@ export function generateParseIntPipe(name) {
     },
   });
 }
+
+/**
+ * 解析url参数
+ * @param {Object} url
+ * @param {Object} queryName
+ */
+export function getParams(url: string, queryName: string): string | null {
+  const query = decodeURI(url.split('?')[1]);
+  const vars = query.split('&');
+  for (let i = 0; i < vars.length; i++) {
+    const pair = vars[i].split('=');
+    if (pair[0] === queryName) {
+      return pair[1];
+    }
+  }
+  return null;
+}
+
+/**
+ * DB data
+ * @author suke
+ * @param {Object} userId
+ * @param {Object} roomId
+ * @param {Object} nickname
+ * @param {Object} pub
+ */
+export function getUserDetailByUid(
+  userId: string,
+  roomId: string,
+  nickname: string,
+  pub: string,
+): string {
+  const res = JSON.stringify({
+    userId: userId,
+    roomId: roomId,
+    nickname: nickname,
+    pub: pub,
+  });
+  return res;
+}

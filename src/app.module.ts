@@ -20,6 +20,8 @@ import { LoginGuard } from './login.guard';
 import { PermissionGuard } from './permission.guard';
 import { ArticleModule } from './router/article/article.module';
 import { TaskModule } from './task/task.module';
+import { EventsGateway } from './events/events.gateway';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -68,6 +70,7 @@ import { TaskModule } from './task/task.module';
     EmailModule,
     ArticleModule,
     TaskModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [
