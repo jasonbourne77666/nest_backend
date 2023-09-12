@@ -55,9 +55,7 @@ export class EventsGateway {
     if (roomId) {
       const obj: any = {};
       obj[userId] = getUserDetailByUid(userId, roomId, nickname, pub);
-
       await this.redisService.hashSet(this.roomKey + roomId, obj);
-
       this.oneToRoomMany(
         roomId,
         this.getMsg('join', userId + ' join then room', 200, {
@@ -77,12 +75,25 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('events')
-  handleEvent(
-    @MessageBody() data: string,
-    @ConnectedSocket() client: Socket,
-  ): string {
-    client;
+  handleEvent(@MessageBody() data: string): string {
     return data;
+  }
+
+  @SubscribeMessage('applyMic')
+  applyMic(@MessageBody() data: string) {
+    const targetUid = data['targetUid'];
+    console.log('targetUid', targetUid);
+    this.oneToOne(targetUid, this.getMsg('applyMic', 'apply mic', 200, data));
+  }
+
+  @SubscribeMessage('acceptApplyMic')
+  acceptApplyMic(@MessageBody() data: string) {
+    const targetUid = data['targetUid'];
+    console.log('targetUid', targetUid);
+    this.oneToOne(
+      targetUid,
+      this.getMsg('acceptApplyMic', 'acceptApplyMic mic', 200, data),
+    );
   }
 
   @SubscribeMessage('msg')
