@@ -82,14 +82,12 @@ export class EventsGateway {
   @SubscribeMessage('applyMic')
   applyMic(@MessageBody() data: string) {
     const targetUid = data['targetUid'];
-    console.log('targetUid', targetUid);
     this.oneToOne(targetUid, this.getMsg('applyMic', 'apply mic', 200, data));
   }
 
   @SubscribeMessage('acceptApplyMic')
   acceptApplyMic(@MessageBody() data: string) {
     const targetUid = data['targetUid'];
-    console.log('targetUid', targetUid);
     this.oneToOne(
       targetUid,
       this.getMsg('acceptApplyMic', 'acceptApplyMic mic', 200, data),
