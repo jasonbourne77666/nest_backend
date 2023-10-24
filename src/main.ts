@@ -12,6 +12,9 @@ async function bootstrap() {
 
   app.setGlobalPrefix('/api');
 
+  // 启用跨域支持
+  app.enableCors();
+
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (errors) => {

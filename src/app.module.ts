@@ -15,13 +15,14 @@ import { Permission } from './router/user/entities/permission.entity';
 import { Article } from './router/article/entities/article.entity';
 import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './router/email/email.module';
+import { ArticleModule } from './router/article/article.module';
+import { TaskModule } from './task/task.module';
+import { EventsModule } from './events/events.module';
+import { UploadModule } from './router/upload/upload.module';
+
 // 守卫
 import { LoginGuard } from './login.guard';
 import { PermissionGuard } from './permission.guard';
-import { ArticleModule } from './router/article/article.module';
-import { TaskModule } from './task/task.module';
-import { EventsGateway } from './events/events.gateway';
-import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -40,7 +41,7 @@ import { EventsModule } from './events/events.module';
           poolSize: 10,
           connectorPackage: 'mysql2',
           extra: {
-            authPlugin: 'sha256_password',
+            // authPlugin: 'sha256_password',
           },
         };
       },
@@ -71,6 +72,7 @@ import { EventsModule } from './events/events.module';
     ArticleModule,
     TaskModule,
     EventsModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [
