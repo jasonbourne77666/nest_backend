@@ -15,21 +15,24 @@ async function bootstrap() {
   // 启用跨域支持
   app.enableCors();
 
+  // 参数校验
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (errors) => {
         if (errors.length && errors[0]) {
           const { property = '', constraints = {} } = errors[0] || {};
           const msg = Object.values(constraints)?.[0];
+          // 参数检验的问题 抛出到全局filter中处理
           throw new HttpException(`${property} ${msg}`, HttpStatus.BAD_REQUEST);
         }
       },
     }),
   );
-
+  // 拦截数据返回
   app.useGlobalInterceptors(new FormatResponseInterceptor());
+  // 日志
   app.useGlobalInterceptors(new InvokeRecordInterceptor());
-
+  // 全局统一错误返回格式
   app.useGlobalFilters(new CustomExceptionFilter());
 
   const config = new DocumentBuilder()
@@ -41,6 +44,7 @@ async function bootstrap() {
       description: '基于 jwt 的认证',
     })
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-doc', app, document);
 
@@ -48,4 +52,5 @@ async function bootstrap() {
 
   await app.listen(configService.get('nest_server_port'));
 }
+
 bootstrap();
