@@ -32,11 +32,11 @@ export class UserService {
   @InjectRepository(User)
   private readonly userRepository: Repository<User>;
 
-  // 注入 User 实体，
+  // 注入 Role 实体，
   @InjectRepository(Role)
   private readonly roleRepository: Repository<Role>;
 
-  // 注入 User 实体，
+  // 注入 Permission 实体，
   @InjectRepository(Permission)
   private readonly permissionRepository: Repository<Permission>;
 
