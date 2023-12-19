@@ -16,6 +16,7 @@ import { createClient } from 'redis';
             port: +configService.get('redis_server_port'),
           },
           database: +configService.get('redis_server_db'),
+          password: configService.get('redis_server_password'),
         });
         await client.connect();
         return client;

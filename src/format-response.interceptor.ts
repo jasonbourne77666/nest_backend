@@ -8,6 +8,7 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
+  ContextType,
 } from '@nestjs/common';
 // import { Response } from 'express';
 import { map, Observable } from 'rxjs';
@@ -19,6 +20,9 @@ export class FormatResponseInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data) => {
+        if (context.getType() === ('graphql' as ContextType)) {
+          return data;
+        }
         return {
           code: 200, // response.statusCode
           message: 'success',

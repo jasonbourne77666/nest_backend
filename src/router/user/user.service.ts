@@ -40,7 +40,7 @@ export class UserService {
   @InjectRepository(Permission)
   private readonly permissionRepository: Repository<Permission>;
 
-  async login(loginUserDto: LoginUserDto, isAdmin: boolean) {
+  async login(loginUserDto: LoginUserDto) {
     const user = await this.userRepository.findOne({
       where: {
         username: loginUserDto.username,
@@ -62,6 +62,10 @@ export class UserService {
     vo.userInfo = this.getLoginVo(user);
 
     return vo;
+  }
+
+  async register(user: User) {
+    return await this.userRepository.save(user);
   }
 
   async emailLogin(loginUserDto: EmailLoginUserDto) {
@@ -149,16 +153,6 @@ export class UserService {
       createTime: user.createTime,
     };
   }
-
-  // async findUserDetailById(userId: number) {
-  //   const user = await this.userRepository.findOne({
-  //     where: {
-  //       id: userId,
-  //     },
-  //   });
-
-  //   return user;
-  // }
 
   // 修改密码
   async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {

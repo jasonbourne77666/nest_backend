@@ -5,20 +5,24 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './router/user/user.module';
-import { User } from './router/user/entities/user.entity';
-import { Role } from './router/user/entities/role.entity';
-import { Permission } from './router/user/entities/permission.entity';
-import { Article } from './router/article/entities/article.entity';
 import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './router/email/email.module';
 import { ArticleModule } from './router/article/article.module';
 import { TaskModule } from './task/task.module';
 import { EventsModule } from './events/events.module';
 import { UploadModule } from './router/upload/upload.module';
+import { OssModule } from './router/oss/oss.module';
+
+import { User } from './router/user/entities/user.entity';
+import { Role } from './router/user/entities/role.entity';
+import { Permission } from './router/user/entities/permission.entity';
+import { Article } from './router/article/entities/article.entity';
 
 // 守卫
 import { LoginGuard } from './login.guard';
@@ -73,6 +77,12 @@ import { PermissionGuard } from './permission.guard';
     TaskModule,
     EventsModule,
     UploadModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      // 自动生成SchemaFile
+      autoSchemaFile: true,
+    }),
+    OssModule,
   ],
   controllers: [AppController],
   providers: [

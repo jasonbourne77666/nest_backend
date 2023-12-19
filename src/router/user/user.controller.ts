@@ -108,7 +108,7 @@ export class UserController {
     type: LoginUserVo,
   })
   async userLogin(@Body() loginUser: LoginUserDto) {
-    const vo = await this.userService.login(loginUser, false);
+    const vo = await this.userService.login(loginUser);
     const res = this.loginVo(vo);
     return res;
   }
@@ -295,7 +295,7 @@ export class UserController {
     newUser.nickName = user.nickName;
 
     try {
-      await this.userRepository.save(newUser);
+      await this.userService.register(newUser);
       return '注册成功';
     } catch (e) {
       // this.logger.error(e, UserService);
@@ -379,7 +379,7 @@ export class UserController {
    * @param updateUserDto
    * @returns
    */
-  @Post(['update', 'admin/update'])
+  @Post(['update'])
   @ApiBearerAuth()
   @ApiBody({
     type: UpdateUserDto,
@@ -444,7 +444,7 @@ export class UserController {
     type: String,
     description: '验证码已失效/不正确',
   })
-  @Post(['update_password', 'admin/update_password'])
+  @Post(['update_password'])
   @RequireLogin()
   async updatePassword(
     @UserInfo('userId') userId: number,
@@ -453,6 +453,7 @@ export class UserController {
     return await this.userService.updatePassword(userId, passwordDto);
   }
 
+  // 修改密码-发送验证码
   @ApiBearerAuth()
   @ApiQuery({
     name: 'address',

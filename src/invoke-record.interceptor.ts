@@ -19,10 +19,10 @@ export class InvokeRecordInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest<Request>() || ({} as any);
     const response = context.switchToHttp().getResponse<Response>();
 
-    const userAgent = request.headers['user-agent'];
+    const userAgent = request?.headers?.['user-agent'];
 
     const { ip, method, path } = request;
 

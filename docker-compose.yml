@@ -1,0 +1,34 @@
+
+version: '3.1'
+services:
+  mysql-db:
+    # 指定容器的名称
+    container_name: mysql
+    image: mysql:8
+    ports:
+      - '3306:3306'
+    restart: 'always'
+    environment:
+       # 配置root密码
+       MYSQL_ROOT_PASSWORD: 'Js123456.'
+    volumes:
+      # 挂载数据目录
+      #- '/home/docker/mysql/data:/var/lib/mysql'
+      - '/Users/jason/Desktop/docker-copy/mysql/data:/var/lib/mysql'
+      # 挂载配置文件目录
+      #- '/home/docker/mysql/config:/etc/mysql/conf.d'
+      - '/Users/jason/Desktop/docker-copy/mysql/config:/etc/mysql/conf.d'
+
+  redis:
+    image: redis:4.0.1
+    container_name: redis-label
+    volumes:
+      # - /home/docker/redis/datadir:/data
+      # - /home/docker/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      # - /home/docker/redis/logs:/logs
+      - /Users/jason/Desktop/docker-copy/redis/datadir:/data
+      - /Users/jason/Desktop/docker-copy/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - /Users/jason/Desktop/docker-copy/redis/logs:/logs
+    command: redis-server --requirepass 654321
+    ports:
+      - 6379:6379

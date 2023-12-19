@@ -46,7 +46,7 @@ export class LoginGuard implements CanActivate {
       return true;
     }
 
-    const authorization = request.headers.authorization;
+    const authorization = request?.headers?.authorization;
 
     if (!authorization) {
       throw new UnauthorizedException('用户未登录');
