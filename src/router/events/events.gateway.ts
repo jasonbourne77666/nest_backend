@@ -9,7 +9,7 @@ import { Inject } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { RedisService } from '../redis/redis.service';
-import { getParams, getUserDetailByUid } from '../utils';
+import { getParams, getUserDetailByUid } from '../../utils';
 
 @WebSocketGateway(18080, {
   transports: ['websocket'],

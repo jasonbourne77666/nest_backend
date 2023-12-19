@@ -3,9 +3,9 @@ import { ValidationPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { FormatResponseInterceptor } from './format-response.interceptor';
-import { InvokeRecordInterceptor } from './invoke-record.interceptor';
-import { CustomExceptionFilter } from './custom-exception.filter';
+import { FormatResponseInterceptor } from './aop/format-response.interceptor';
+import { InvokeRecordInterceptor } from './aop/invoke-record.interceptor';
+import { CustomExceptionFilter } from './aop/custom-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

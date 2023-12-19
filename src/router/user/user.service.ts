@@ -17,7 +17,7 @@ import { LoginUserVo, UserListVo } from './vo';
 import { User } from './entities/user.entity';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
-import { RedisService } from '../../redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 
 import { md5 } from '../../utils';
 

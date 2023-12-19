@@ -108,3 +108,12 @@ export function copyFile(src: fs.PathLike, dest: fs.PathLike) {
     });
   });
 }
+
+// 生成4位随机验证码
+export function generateCode() {
+  let code = '';
+  for (let i = 0; i < 4; i++) {
+    code += Math.floor(Math.random() * 10);
+  }
+  return code;
+}

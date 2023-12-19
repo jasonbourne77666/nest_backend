@@ -1,6 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { RequireLogin, RequirePermission, UserInfo } from './custom.decorator';
+import {
+  RequireLogin,
+  RequirePermission,
+  UserInfo,
+} from './aop/custom.decorator';
 
 @Controller()
 export class AppController {

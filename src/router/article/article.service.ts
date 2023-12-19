@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { Article } from './entities/article.entity';
-import { RedisService } from '../../redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class ArticleService {

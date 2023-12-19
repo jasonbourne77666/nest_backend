@@ -5,3 +5,8 @@ export const ossConfig = {
   // callbackUrl: 'url',
   dir: 'images/',
 };
+
+export const phoneSmsConfig = {
+  templateCode: 'templateCode',
+  signName: 'signName',
+};

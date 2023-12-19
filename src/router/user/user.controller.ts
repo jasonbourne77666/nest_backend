@@ -35,8 +35,8 @@ import { LoginUserVo, UserDetailVo, RefreshTokenVo, UserListVo } from './vo';
 import { UserService } from './user.service';
 import { EmailService } from '../email/email.service';
 import { User } from './entities/user.entity';
-import { RedisService } from '../../redis/redis.service';
-import { RequireLogin, UserInfo } from '../../custom.decorator';
+import { RedisService } from '../redis/redis.service';
+import { RequireLogin, UserInfo } from '../../aop/custom.decorator';
 import { md5, generateParseIntPipe } from '../../utils';
 
 @ApiTags('用户管理')
