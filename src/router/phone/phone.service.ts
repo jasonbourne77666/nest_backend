@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Dysmsapi20170525, * as $Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
-import * as $OpenApi from '@alicloud/openapi-client';
+import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
 import Util, * as $Util from '@alicloud/tea-util';
 
 import { phoneSmsConfig, ossConfig } from '@/config/config';

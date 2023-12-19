@@ -24,4 +24,9 @@ export class ArticleController {
     await this.articleService.initData();
     return 'done';
   }
+
+  @Get('/init')
+  async initData2() {
+    return 'done';
+  }
 }

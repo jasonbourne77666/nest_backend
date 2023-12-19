@@ -118,7 +118,7 @@ export class UserController {
    * @param loginUser
    * @returns
    */
-  @Post('login-email')
+  @Post('email-login')
   @ApiBody({
     type: EmailLoginUserDto,
   })
@@ -138,14 +138,15 @@ export class UserController {
     return res;
   }
 
+  // login-email-captcha
   /**
-   * login-captcha
-   * @param address
+   *
+   * @param email
    * @returns
    */
-  @Get('login-captcha')
+  @Get('email-login-captcha')
   @ApiQuery({
-    name: 'address',
+    name: 'email',
     type: String,
     description: '邮箱地址',
     required: true,
@@ -156,16 +157,16 @@ export class UserController {
     description: '发送成功',
     type: String,
   })
-  async loginCaptcha(@Query('address') address: string) {
-    if (!address) {
+  async loginCaptcha(@Query('email') email: string) {
+    if (!email) {
       throw new HttpException('请输入邮箱', HttpStatus.BAD_REQUEST);
     }
     const code = Math.random().toString().slice(2, 8);
 
-    await this.redisService.set(`login_user_captcha_${address}`, code, 10 * 60);
-
+    await this.redisService.set(`login_user_captcha_${email}`, code, 10 * 60);
+    console.log(code);
     await this.emailService.sendMail({
-      to: address,
+      to: email,
       subject: '登录验证码',
       html: `<p>你的验证码是 ${code}</p>`,
     });
@@ -270,7 +271,9 @@ export class UserController {
     type: String,
   })
   async register(@Body(ValidationPipe) user: RegisterUserDto) {
-    const captcha = await this.redisService.get(`captcha_${user.email}`);
+    const captcha = await this.redisService.get(
+      `captcha_regiter_${user.email}`,
+    );
 
     if (!captcha) {
       throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
@@ -330,7 +333,7 @@ export class UserController {
     const code = Math.random().toString().slice(2, 8);
 
     // 有效期 5 mins
-    await this.redisService.set(`captcha_${address}`, code, 5 * 60);
+    await this.redisService.set(`captcha_regiter_${address}`, code, 5 * 60);
 
     await this.emailService.sendMail({
       to: address,

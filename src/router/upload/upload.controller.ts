@@ -19,10 +19,7 @@ import * as path from 'path';
 import formidable from 'formidable';
 import * as concat from 'concat-files';
 
-import {
-  FilesInterceptor,
-  AnyFilesInterceptor,
-} from '@nestjs/platform-express';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { existsSync } from 'fs';
 import { UploadService } from './upload.service';
 import { listDir, isExist, folderIsExit, copyFile } from '../../utils';

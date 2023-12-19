@@ -10,7 +10,7 @@ import { CustomExceptionFilter } from './aop/custom-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // app.setGlobalPrefix('/api');
+  app.setGlobalPrefix('/api');
 
   // 启用跨域支持
   app.enableCors();
