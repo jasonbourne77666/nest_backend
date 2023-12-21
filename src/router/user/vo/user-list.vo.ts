@@ -24,6 +24,9 @@ class User {
 
   @ApiProperty()
   createTime: Date;
+
+  @ApiProperty()
+  updateTime: Date;
 }
 
 export class UserListVo {

@@ -276,6 +276,7 @@ export class UserService {
         'isFrozen',
         'headPic',
         'createTime',
+        'updateTime',
       ],
       skip: skipCount,
       take: pageSize,
