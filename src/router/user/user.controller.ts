@@ -274,7 +274,7 @@ export class UserController {
     const captcha = await this.redisService.get(
       `captcha_regiter_${user.email}`,
     );
-
+    console.log(`captcha_regiter_${user.email}`, captcha);
     if (!captcha) {
       throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
     }
@@ -309,12 +309,12 @@ export class UserController {
   // 注册邮箱验证码
   /**
    * register-captcha
-   * @param address
+   * @param email
    * @returns
    */
   @Get('register-captcha')
   @ApiQuery({
-    name: 'address',
+    name: 'email',
     type: String,
     description: '邮箱地址',
     required: true,
@@ -325,18 +325,18 @@ export class UserController {
     description: '发送成功',
     type: String,
   })
-  async captcha(@Query('address') address: string) {
-    if (!address) {
+  async captcha(@Query('email') email: string) {
+    if (!email) {
       throw new HttpException('请输入邮箱', HttpStatus.BAD_REQUEST);
     }
 
     const code = Math.random().toString().slice(2, 8);
 
     // 有效期 5 mins
-    await this.redisService.set(`captcha_regiter_${address}`, code, 5 * 60);
+    await this.redisService.set(`captcha_regiter_${email}`, code, 5 * 60);
 
     await this.emailService.sendMail({
-      to: address,
+      to: email,
       subject: '注册验证码',
       html: `<p>你的注册验证码是 ${code}</p>`,
     });
@@ -398,7 +398,7 @@ export class UserController {
   })
   @RequireLogin()
   async update(
-    @UserInfo('userId') userId: number,
+    @Body('userId') userId: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return await this.userService.update(userId, updateUserDto);
@@ -417,21 +417,17 @@ export class UserController {
     type: String,
   })
   @Get('update/captcha')
-  async updateCaptcha(@Query('address') address: string) {
-    if (!address) {
+  async updateCaptcha(@Query('email') email: string) {
+    if (!email) {
       throw new HttpException('请输入邮箱', HttpStatus.BAD_REQUEST);
     }
 
     const code = Math.random().toString().slice(2, 8);
 
-    await this.redisService.set(
-      `update_user_captcha_${address}`,
-      code,
-      10 * 60,
-    );
-
+    await this.redisService.set(`update_user_captcha_${email}`, code, 10 * 60);
+    console.log('get-code', code);
     await this.emailService.sendMail({
-      to: address,
+      to: email,
       subject: '更改用户信息验证码',
       html: `<p>你的验证码是 ${code}</p>`,
     });
@@ -505,6 +501,24 @@ export class UserController {
   async freeze(@Query('id') userId: number) {
     await this.userService.freezeUserById(userId);
     return 'success';
+  }
+
+  // 删除用户
+  @ApiBearerAuth()
+  @ApiQuery({
+    name: 'id',
+    description: 'userId',
+    type: Number,
+  })
+  @ApiResponse({
+    type: String,
+    description: 'success',
+  })
+  @RequireLogin()
+  @Get('delete')
+  async deleteUser(@Query('id') userId: number) {
+    await this.userService.deleteUserById(userId);
+    return '删除成功';
   }
 
   // 用户列表

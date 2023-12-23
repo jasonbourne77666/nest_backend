@@ -1,4 +1,9 @@
-import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateUserDto {
@@ -23,6 +28,15 @@ export class UpdateUserDto {
   )
   @ApiProperty()
   email: string;
+
+  @IsNotEmpty({
+    message: '手机号不能为空',
+  })
+  @IsPhoneNumber('CN', {
+    message: '不是合法的手机号格式',
+  })
+  @ApiProperty()
+  phoneNumber: string;
 
   @IsNotEmpty({
     message: '验证码不能为空',

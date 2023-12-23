@@ -54,7 +54,7 @@ export class UserService {
     }
 
     if (user.password !== md5(loginUserDto.password)) {
-      throw new HttpException('密码错误', HttpStatus.BAD_REQUEST);
+      throw new HttpException('用户名或者密码错误', HttpStatus.BAD_REQUEST);
     }
 
     const vo = new LoginUserVo();
@@ -188,7 +188,8 @@ export class UserService {
     const captcha = await this.redisService.get(
       `update_user_captcha_${updateUserDto.email}`,
     );
-
+    console.log('captcha', captcha);
+    console.log('updateUserDto.captcha', updateUserDto.captcha);
     if (!captcha) {
       throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
     }
@@ -213,6 +214,14 @@ export class UserService {
       foundUser.headPic = updateUserDto.headPic;
     }
 
+    if (updateUserDto.phoneNumber) {
+      foundUser.phoneNumber = updateUserDto.phoneNumber;
+    }
+
+    if (updateUserDto.email) {
+      foundUser.email = updateUserDto.email;
+    }
+
     try {
       await this.userRepository.save(foundUser);
       return '用户信息修改成功';
@@ -234,6 +243,11 @@ export class UserService {
     }
 
     await this.userRepository.save(user);
+  }
+
+  // 删除
+  async deleteUserById(id: number) {
+    return await this.userRepository.delete({ id });
   }
 
   async findUsers(
