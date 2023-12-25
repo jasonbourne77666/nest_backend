@@ -26,8 +26,8 @@ import { Permission } from './router/user/entities/permission.entity';
 import { Article } from './router/article/entities/article.entity';
 
 // 守卫
-import { LoginGuard } from './aop/login.guard';
-import { PermissionGuard } from './aop/permission.guard';
+import { LoginGuard } from './common/guards/login.guard';
+import { PermissionGuard } from './common/guards/permission.guard';
 
 @Module({
   imports: [

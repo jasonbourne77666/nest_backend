@@ -4,7 +4,7 @@ import {
   RequireLogin,
   RequirePermission,
   UserInfo,
-} from './aop/custom.decorator';
+} from './common/decorator/custom.decorator';
 
 @Controller()
 export class AppController {
