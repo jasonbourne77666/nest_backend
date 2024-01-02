@@ -9,7 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
-import { Permission } from '../../router/user/entities/permission.entity';
+import { Permission } from '../../router/permission/entities/permission.entity';
 
 interface JwtUserData {
   userId: number;

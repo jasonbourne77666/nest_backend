@@ -10,6 +10,8 @@ import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './router/user/user.module';
+import { RoleModule } from './router/role/role.module';
+import { PermissionModule } from './router/permission/permission.module';
 import { RedisModule } from './router/redis/redis.module';
 import { EmailModule } from './router/email/email.module';
 import { ArticleModule } from './router/article/article.module';
@@ -21,8 +23,8 @@ import { PhoneModule } from './router/phone/phone.module';
 
 // entities
 import { User } from './router/user/entities/user.entity';
-import { Role } from './router/user/entities/role.entity';
-import { Permission } from './router/user/entities/permission.entity';
+import { Role } from './router/role/entities/role.entity';
+import { Permission } from './router/permission/entities/permission.entity';
 import { Article } from './router/article/entities/article.entity';
 
 // 守卫
@@ -80,6 +82,8 @@ import { PermissionGuard } from './common/guards/permission.guard';
     UploadModule,
     OssModule,
     PhoneModule,
+    RoleModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [

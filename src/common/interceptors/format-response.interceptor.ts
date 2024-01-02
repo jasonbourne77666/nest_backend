@@ -23,6 +23,9 @@ export class FormatResponseInterceptor implements NestInterceptor {
         if (context.getType() === ('graphql' as ContextType)) {
           return data;
         }
+        if (data && data.code) {
+          return data;
+        }
         return {
           code: 200, // response.statusCode
           message: 'success',
