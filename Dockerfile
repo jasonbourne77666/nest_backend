@@ -6,6 +6,8 @@ WORKDIR /app
 COPY package.json .
 
 RUN npm config set registry https://registry.npmmirror.com/
+RUN npm config set sharp_binary_host https://npmmirror.com/mirrors/sharp
+RUN npm config set sharp_libvips_binary_host https://npmmirror.com/mirrors/sharp-libvips
 
 RUN npm install
 
