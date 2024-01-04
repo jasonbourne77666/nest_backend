@@ -14,8 +14,17 @@ export class UpdateUserDto {
   @ApiProperty()
   nickName: string;
 
+  @IsNotEmpty({
+    message: '用户名不能为空',
+  })
   @ApiProperty()
   username: string;
+
+  @IsNotEmpty({
+    message: '角色不能为空',
+  })
+  @ApiProperty()
+  roles: number;
 
   @IsNotEmpty({
     message: '邮箱不能为空',

@@ -1,6 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
 export class CreateRoleDto {
   @IsNotEmpty({
     message: '角色名不能为空',
@@ -12,8 +11,5 @@ export class CreateRoleDto {
 
   opUser?: string;
 
-  // @IsNotEmpty({
-  //   message: '状态不能为空',
-  // })
-  // status: number;
+  permissionIds: number[];
 }

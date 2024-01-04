@@ -34,6 +34,7 @@ import {
 import { LoginUserVo, UserDetailVo, RefreshTokenVo, UserListVo } from './vo';
 import { UserService } from './user.service';
 import { EmailService } from '../email/email.service';
+import { RoleService } from '../role/role.service';
 import { User } from './entities/user.entity';
 import { RedisService } from '../redis/redis.service';
 import {
@@ -50,6 +51,9 @@ export class UserController {
   @Inject(RedisService)
   private redisService: RedisService;
 
+  @Inject(RoleService)
+  private roleService: RoleService;
+
   // 注入 User 实体，
   @InjectRepository(User)
   private readonly userRepository: Repository<User>;
@@ -62,34 +66,6 @@ export class UserController {
 
   @Inject(ConfigService)
   private configService: ConfigService;
-
-  // 组装登录信息
-  loginVo(loginUser: LoginUserVo) {
-    loginUser.accessToken = this.jwtService.sign(
-      {
-        userId: loginUser.userInfo.id,
-        username: loginUser.userInfo.username,
-        roles: loginUser.userInfo.roles,
-        permissions: loginUser.userInfo.permissions,
-      },
-      {
-        expiresIn:
-          this.configService.get('jwt_access_token_expires_time') || '30m',
-      },
-    );
-
-    loginUser.refreshToken = this.jwtService.sign(
-      {
-        userId: loginUser.userInfo.id,
-      },
-      {
-        expiresIn:
-          this.configService.get('jwt_refresh_token_expres_time') || '7d',
-      },
-    );
-
-    return loginUser;
-  }
 
   /**
    * login
@@ -277,7 +253,7 @@ export class UserController {
     const captcha = await this.redisService.get(
       `captcha_regiter_${user.email}`,
     );
-    console.log(`captcha_regiter_${user.email}`, captcha);
+
     if (!captcha) {
       throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
     }
@@ -294,11 +270,16 @@ export class UserController {
       throw new HttpException('用户已存在', HttpStatus.BAD_REQUEST);
     }
 
+    // 获取角色
+    const role = await this.roleService.findOneById(user.roles);
+
     const newUser = new User();
     newUser.username = user.username;
     newUser.password = md5(user.password);
     newUser.email = user.email;
     newUser.nickName = user.nickName;
+    newUser.phoneNumber = user.phoneNumber;
+    newUser.roles = [role];
 
     try {
       await this.userService.register(newUser);
@@ -334,7 +315,7 @@ export class UserController {
     }
 
     const code = Math.random().toString().slice(2, 8);
-
+    console.log(code);
     // 有效期 5 mins
     await this.redisService.set(`captcha_regiter_${email}`, code, 5 * 60);
 
@@ -375,6 +356,7 @@ export class UserController {
     vo.isFrozen = user.isFrozen;
     vo.roles = user.roles;
     vo.permissions = user.permissions;
+    vo.isAdmin = user.isAdmin;
     return vo;
   }
 
@@ -428,7 +410,7 @@ export class UserController {
     const code = Math.random().toString().slice(2, 8);
 
     await this.redisService.set(`update_user_captcha_${email}`, code, 10 * 60);
-    console.log('get-code', code);
+    console.log('update-code', code);
     await this.emailService.sendMail({
       to: email,
       subject: '更改用户信息验证码',
@@ -473,7 +455,7 @@ export class UserController {
       throw new HttpException('请输入邮箱', HttpStatus.BAD_REQUEST);
     }
     const code = Math.random().toString().slice(2, 8);
-
+    console.log('update_password', code);
     await this.redisService.set(
       `update_password_captcha_${address}`,
       code,
@@ -594,5 +576,32 @@ export class UserController {
   async initData() {
     await this.userService.initData();
     return 'done';
+  }
+
+  loginVo(loginUser: LoginUserVo) {
+    loginUser.accessToken = this.jwtService.sign(
+      {
+        userId: loginUser.userInfo.id,
+        username: loginUser.userInfo.username,
+        roles: loginUser.userInfo.roles,
+        permissions: loginUser.userInfo.permissions,
+      },
+      {
+        expiresIn:
+          this.configService.get('jwt_access_token_expires_time') || '30m',
+      },
+    );
+
+    loginUser.refreshToken = this.jwtService.sign(
+      {
+        userId: loginUser.userInfo.id,
+      },
+      {
+        expiresIn:
+          this.configService.get('jwt_refresh_token_expres_time') || '7d',
+      },
+    );
+
+    return loginUser;
   }
 }

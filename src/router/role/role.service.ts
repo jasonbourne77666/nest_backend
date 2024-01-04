@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, Like } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { FindRoleDto } from './dto/find-role.dto';
 import { FindRoleListVo } from './vo/find-role.vo';
@@ -13,7 +12,7 @@ export class RoleService {
   @InjectRepository(Role)
   private readonly roleRepository: Repository<Role>;
 
-  async create(createRoleDto: CreateRoleDto) {
+  async create(createRoleDto: Role) {
     return await this.roleRepository.save(createRoleDto);
   }
 
@@ -34,6 +33,7 @@ export class RoleService {
       where: condition,
       skip: (pageNo - 1) * pageSize,
       take: pageSize,
+      relations: ['permissions'],
     });
 
     const vo = new FindRoleListVo();
@@ -41,6 +41,15 @@ export class RoleService {
     vo.totalCount = totalCount;
     vo.pageNo = pageNo;
     vo.pageSize = pageSize;
+    return vo;
+  }
+
+  async findAllRoles() {
+    const list = await this.roleRepository.find({
+      relations: ['permissions'],
+    });
+    const vo = new FindRoleListVo();
+    vo.list = list;
     return vo;
   }
 
@@ -56,11 +65,8 @@ export class RoleService {
     });
   }
 
-  async update(updateRoleDto: UpdateRoleDto) {
-    return await this.roleRepository.update(
-      { id: updateRoleDto.id },
-      updateRoleDto,
-    );
+  async update(updateRoleDto: Role) {
+    return await this.roleRepository.save(updateRoleDto);
   }
 
   async remove(id: number) {

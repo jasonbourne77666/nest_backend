@@ -9,6 +9,12 @@ export class RegisterUserDto {
   username: string;
 
   @IsNotEmpty({
+    message: '角色不能为空',
+  })
+  @ApiProperty()
+  roles: number;
+
+  @IsNotEmpty({
     message: '昵称不能为空',
   })
   @ApiProperty()

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { Role } from '../role/entities/role.entity';
+import { RoleModule } from '../role/role.module';
 import { Permission } from '../permission/entities/permission.entity';
 import { UserController } from './user.controller';
 import { EmailModule } from '../email/email.module';
@@ -15,6 +16,7 @@ import { EmailModule } from '../email/email.module';
       Permission,
     ]),
     EmailModule,
+    RoleModule,
   ],
   controllers: [UserController],
   providers: [UserService],

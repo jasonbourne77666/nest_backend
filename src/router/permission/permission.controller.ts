@@ -42,9 +42,20 @@ export class PermissionController {
   }
 
   @Get('list')
-  async findAll(@Query() query: FindPermissionDto) {
+  async findRoleList(@Query() query: FindPermissionDto) {
     try {
       return await this.permissionService.findPermissions(query);
+    } catch (error) {
+      console.log(error);
+      return { code: 400, data: null, message: '查询失败' };
+    }
+  }
+
+  @Get('getAll')
+  async findAll() {
+    try {
+      const data = await this.permissionService.findAllPermissions();
+      return data;
     } catch (error) {
       console.log(error);
       return { code: 400, data: null, message: '查询失败' };

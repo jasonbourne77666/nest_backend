@@ -11,6 +11,9 @@ export class UserDetailVo {
   nickName: string;
 
   @ApiProperty()
+  isAdmin: boolean;
+
+  @ApiProperty()
   email: string;
 
   @ApiProperty()

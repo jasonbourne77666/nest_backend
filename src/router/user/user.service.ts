@@ -18,6 +18,7 @@ import { User } from './entities/user.entity';
 import { Role } from '../role/entities/role.entity';
 import { Permission } from '../permission/entities/permission.entity';
 import { RedisService } from '../redis/redis.service';
+import { RoleService } from '../role/role.service';
 
 import { md5 } from '../../utils';
 
@@ -27,6 +28,9 @@ export class UserService {
 
   @Inject(RedisService)
   private redisService: RedisService;
+
+  @Inject(RoleService)
+  private roleService: RoleService;
 
   // 注入 User 实体，
   @InjectRepository(User)
@@ -188,8 +192,7 @@ export class UserService {
     const captcha = await this.redisService.get(
       `update_user_captcha_${updateUserDto.email}`,
     );
-    console.log('captcha', captcha);
-    console.log('updateUserDto.captcha', updateUserDto.captcha);
+
     if (!captcha) {
       throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
     }
@@ -197,6 +200,8 @@ export class UserService {
     if (updateUserDto.captcha !== captcha) {
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
+
+    const role = await this.roleService.findOneById(updateUserDto.roles);
 
     const foundUser = await this.userRepository.findOneBy({
       id: userId,
@@ -221,6 +226,8 @@ export class UserService {
     if (updateUserDto.email) {
       foundUser.email = updateUserDto.email;
     }
+
+    foundUser.roles = [role];
 
     try {
       await this.userRepository.save(foundUser);
@@ -321,6 +328,7 @@ export class UserService {
     user2.password = md5('222222');
     user2.email = 'yy@yy.com';
     user2.nickName = '李四';
+    user2.phoneNumber = '13233323333';
 
     const role1 = new Role();
     role1.name = '管理员';

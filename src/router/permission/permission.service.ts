@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, In } from 'typeorm';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { FindPermissionDto } from './dto/find-permission.dto';
@@ -41,6 +41,18 @@ export class PermissionService {
     vo.pageNo = role.pageNo;
     vo.pageSize = pageSize;
 
+    return vo;
+  }
+
+  async findAllPermissions(ids?: number[]) {
+    ids = ids || [];
+    const condition: Record<string, any> = {};
+    if (ids.length > 0) {
+      condition.id = In(ids);
+    }
+    const list = await this.permissionRepository.find({ where: condition });
+    const vo = new FindPermissionListVo();
+    vo.list = list;
     return vo;
   }
 
