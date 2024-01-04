@@ -11,6 +11,7 @@ services:
     environment:
        # 配置root密码
        MYSQL_ROOT_PASSWORD: 'Js123456.'
+       TZ: 'Asia/Shanghai'
     volumes:
       # 挂载数据目录
       #- '/home/docker/mysql/data:/var/lib/mysql'
@@ -24,6 +25,7 @@ services:
     container_name: redis-label
     restart: 'always'
     volumes:
+      # 服务器上用
       # - /home/docker/redis/datadir:/data
       # - /home/docker/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
       # - /home/docker/redis/logs:/logs
@@ -33,3 +35,14 @@ services:
     command: redis-server --requirepass 654321
     ports:
       - 6379:6379
+  
+  docker_jenkins:
+    user: root                                 # 为了避免一些权限问题 在这我使用了root
+    restart: always                            # 重启方式
+    image: jenkins/jenkins:lts                 # 指定服务所使用的镜像 在这里我选择了 LTS (长期支持)
+    container_name: jenkins                    # 容器名称
+    ports:                                     # 对外暴露的端口定义
+      - 8082:8080                              # 访问Jenkins服务端口
+      - 50000:50000
+    volumes:                                   # 卷挂载路径
+      - /home/docker/jenkins/jenkins_home/:/var/jenkins_home  # 这是我们一开始创建的目录挂载到容器内的jenkins_home目录
