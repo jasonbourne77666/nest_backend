@@ -39,7 +39,7 @@ pipeline {
 
                     // 这里添加部署到服务器的命令或者直接在jenkins上部署
                     sh "docker run -d -p 3000:3000 --name ${IMAGE_NAME} ${IMAGE_NAME}:${BUILD_NUMBER}"
-                    
+
                     // 例如，使用 SSH 连接到服务器并更新 Docker 容器
                 }
             }
@@ -51,11 +51,11 @@ pipeline {
             // 清理工作，例如删除构建时创建的 Docker 镜像和容器
             sh "docker rmi ${IMAGE_NAME}:${BUILD_NUMBER}"
         }
-        success {
+        // success {
             // 成功构建后的操作，例如发送通知
-        }
-        failure {
+        // }
+        // failure {
             // 构建失败的操作，例如发送通知
-        }
+        // }
     }
 }
