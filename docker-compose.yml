@@ -41,8 +41,12 @@ services:
     restart: always                            # 重启方式
     image: jenkins/jenkins:lts                 # 指定服务所使用的镜像 在这里我选择了 LTS (长期支持)
     container_name: jenkins                    # 容器名称
+    environment:
+       TZ: 'Asia/Shanghai'
     ports:                                     # 对外暴露的端口定义
       - 8082:8080                              # 访问Jenkins服务端口
       - 50000:50000
     volumes:                                   # 卷挂载路径
       - /home/docker/jenkins/jenkins_home/:/var/jenkins_home  # 这是我们一开始创建的目录挂载到容器内的jenkins_home目录
+      - /var/run/docker.sock:/var/run/docker.sock              # 这是为了在容器内部使用docker命令
+      - /usr/bin/docker:/usr/bin/docker                        # 这是为了在容器内部使用docker命令
