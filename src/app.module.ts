@@ -17,9 +17,9 @@ import { EmailModule } from './router/email/email.module';
 import { ArticleModule } from './router/article/article.module';
 import { TaskModule } from './task/task.module';
 import { EventsModule } from './router/events/events.module';
-import { UploadModule } from './router/upload/upload.module';
-import { OssModule } from './router/oss/oss.module';
-import { PhoneModule } from './router/phone/phone.module';
+// import { UploadModule } from './router/upload/upload.module';
+// import { OssModule } from './router/oss/oss.module';
+// import { PhoneModule } from './router/phone/phone.module';
 
 // entities
 import { User } from './router/user/entities/user.entity';
@@ -79,9 +79,9 @@ import { PermissionGuard } from './common/guards/permission.guard';
     ArticleModule,
     TaskModule,
     EventsModule,
-    UploadModule,
-    OssModule,
-    PhoneModule,
+    // UploadModule,
+    // OssModule,
+    // PhoneModule,
     RoleModule,
     PermissionModule,
   ],
