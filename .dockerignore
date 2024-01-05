@@ -1,0 +1,7 @@
+# 防止docker COPY时报错
+node_modules
+uploads
+.git
+.gitignore
+*.md
+dist

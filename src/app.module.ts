@@ -35,6 +35,10 @@ import { PermissionGuard } from './common/guards/permission.guard';
   imports: [
     TypeOrmModule.forRootAsync({
       useFactory(configService: ConfigService) {
+        console.log(
+          'mysql_server_host',
+          configService.get('mysql_server_host'),
+        );
         return {
           type: 'mysql',
           host: configService.get('mysql_server_host'),
@@ -70,7 +74,7 @@ import { PermissionGuard } from './common/guards/permission.guard';
 
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: path.join(process.cwd(), 'src/config/.env'),
+      envFilePath: path.join(process.cwd(), `.env.${process.env.NODE_ENV}`),
     }),
     ScheduleModule.forRoot(),
     UserModule,
