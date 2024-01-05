@@ -21,7 +21,7 @@ COPY --from=build-stage /app/package.json /app/package.json
 
 WORKDIR /app
 
-RUN npm install --omit=dev
+RUN npm install --production
 
 EXPOSE 3000
 
