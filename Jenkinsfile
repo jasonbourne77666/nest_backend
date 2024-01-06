@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     // 构建 Docker 镜像
-                    sh "docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} ."
+                    sh " DOCKER_BUILDKIT=1 docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} ."
                 }
             }
         }
