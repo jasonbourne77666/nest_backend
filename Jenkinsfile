@@ -49,8 +49,8 @@ pipeline {
     post {
         always {
             // 清理工作，例如删除构建时创建的 Docker 镜像和容器
-            sh "docker container prune"
-            sh "docker image prune"
+            sh "docker container prune -f"
+            sh "docker image prune -f"
         }
         // success {
             // 成功构建后的操作，例如发送通知
