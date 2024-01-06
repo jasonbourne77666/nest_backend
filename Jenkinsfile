@@ -32,10 +32,10 @@ pipeline {
             steps {
                 script {
                     // 登录到 Docker 镜像仓库（如果需要）
-                    sh "docker login -u ${USERNAME} -p ${PASSWORD}}"
+                    // sh "docker login -u ${USERNAME} -p ${PASSWORD}}"
 
                     // 推送 Docker 镜像到仓库
-                    sh "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
+                    // sh "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
 
                     // 这里添加部署到服务器的命令或者直接在jenkins上部署
                     sh "docker run -d -p 3000:3000 --name ${IMAGE_NAME} ${IMAGE_NAME}:${BUILD_NUMBER}"
