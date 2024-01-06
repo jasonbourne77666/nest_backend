@@ -1,35 +1,19 @@
-FROM node:18.19.0-alpine3.18 as build-stage
-
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . /app
 WORKDIR /app
 
-COPY package.json .
-COPY .env.development .
-COPY .env.production .
-COPY .npmrc .
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod 
 
-RUN npm config set registry https://registry.npmmirror.com/
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install 
+RUN pnpm run build
 
-RUN npm install
-
-COPY . .
-
-RUN npm run build
-
-# production stage
-# FROM node:18.19.0-alpine3.18 as production-stage
-
-# COPY --from=build-stage /app/dist /app
-# COPY --from=build-stage /app/package.json /app/package.json
-# COPY --from=build-stage /app/.env.development /app/.env.development
-# COPY --from=build-stage /app/.env.production /app/.env.production
-# COPY --from=build-stage /app/.npmrc /app/.npmrc
-
-# WORKDIR /app
-
-# RUN npm config set registry https://registry.npmmirror.com/
-
-# RUN npm install
-
+FROM base
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
 EXPOSE 3000
-
-CMD ["npm", "run", "start:prod"]
+CMD [ "pnpm", "start:prod" ]
