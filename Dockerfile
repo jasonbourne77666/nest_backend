@@ -16,19 +16,19 @@ COPY . .
 RUN npm run build
 
 # production stage
-FROM node:18.19.0-alpine3.18 as production-stage
+# FROM node:18.19.0-alpine3.18 as production-stage
 
-COPY --from=build-stage /app/dist /app
-COPY --from=build-stage /app/package.json /app/package.json
-COPY --from=build-stage /app/.env.development /app/.env.development
-COPY --from=build-stage /app/.env.production /app/.env.production
-COPY --from=build-stage /app/.npmrc /app/.npmrc
+# COPY --from=build-stage /app/dist /app
+# COPY --from=build-stage /app/package.json /app/package.json
+# COPY --from=build-stage /app/.env.development /app/.env.development
+# COPY --from=build-stage /app/.env.production /app/.env.production
+# COPY --from=build-stage /app/.npmrc /app/.npmrc
 
-WORKDIR /app
+# WORKDIR /app
 
-RUN npm config set registry https://registry.npmmirror.com/
+# RUN npm config set registry https://registry.npmmirror.com/
 
-RUN npm install
+# RUN npm install
 
 EXPOSE 3000
 
