@@ -24,6 +24,6 @@ export class AppController {
 
   @Get('bbb')
   bbb() {
-    return 'aaa-bbb-ccc';
+    return 'aaa';
   }
 }
