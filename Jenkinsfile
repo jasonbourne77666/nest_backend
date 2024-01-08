@@ -17,7 +17,7 @@ pipeline {
                     // 运行构建
                     sh "npm run build"
                     // 压缩dist-new文件夹
-                    sh "tar -zcvf dist-new.tgz dist-new"
+                    sh "tar -zcvf dist-new.tar.gz dist-new"
                 }
             }
         }
@@ -34,13 +34,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''pm2 stop server && pm2 delete server
-rm -rf /project/server/dist-new
-cd /project/server/
-tar xf dist-new.tgz
-cd dist-new
-npm i
-npm run start:prod''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/project/server', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new. tgz')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                    sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'pm2 stop server && pm2 delete server && rm -rf /project/server/dist-new && cd /project/server && tar -xzvf dist-new.tar.gz && cd dist-new && npm install && npm run start:prod', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/project/server', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new. tgz')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
                     echo 'Credentials SUCCESS'
                 }
             }
