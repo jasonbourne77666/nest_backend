@@ -41,18 +41,18 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            sh "node --version"
-            // 清理工作，例如删除构建时创建的 Docker 镜像和容器
-            // sh "docker container prune -f"
-            // sh "docker image prune -f"
-        }
-        // success {
-            // 成功构建后的操作，例如发送通知
-        // }
-        // failure {
-            // 构建失败的操作，例如发送通知
-        // }
-    }
+    // post {
+    //     always {
+    //         // sh "node --version"
+    //         // 清理工作，例如删除构建时创建的 Docker 镜像和容器
+    //         // sh "docker container prune -f"
+    //         // sh "docker image prune -f"
+    //     }
+    //     // success {
+    //         // 成功构建后的操作，例如发送通知
+    //     // }
+    //     // failure {
+    //         // 构建失败的操作，例如发送通知
+    //     // }
+    // }
 }
