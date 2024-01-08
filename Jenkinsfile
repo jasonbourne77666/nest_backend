@@ -37,8 +37,8 @@ pipeline {
             steps {
                 script {
                     // 流水线语法 Exec command
-                    // cd /project/server && pm2 stop server && pm2 delete server && rm -rf dist-new && tar -xzvf dist-new.tar.gz && cd dist-new && npm install && nohup npm run start:prod &
-                    sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'cd /project/server && pm2 stop server && pm2 delete server && rm -rf dist-new && tar -xzvf dist-new.tar.gz && cd dist-new && npm install && nohup npm run start:prod &', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tar.gz')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                    // cd /project/server && pm2 stop server && pm2 delete server && rm -rf dist-new && tar -xzvf dist-new.tar.gz && cd dist-new && npm install && nohup npm run start:prod & exit
+                    sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'cd /project/server && pm2 stop server && pm2 delete server && rm -rf dist-new && tar -xzvf dist-new.tar.gz && cd dist-new && npm install && nohup npm run start:prod & exit', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tar.gz')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
                     echo 'Credentials SUCCESS'
                 }
             }
