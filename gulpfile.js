@@ -37,6 +37,7 @@ gulp.task('copy', () => {
         '.env.development',
         '.env.production',
         '.npmrc',
+        'ecosystem.config.js',
       ])
       .pipe(gulp.dest(DIST_NEW)),
     gulp.src(['dist/**/*']).pipe(gulp.dest(DIST_NEW + '/dist')),
