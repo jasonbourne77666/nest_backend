@@ -34,7 +34,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'node -v', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tgz')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                    sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'kill $(lsof -t -i :3000);rm -rf /project/server/dist-new;cd /project/server/;tar xf dist-new.tgz;cd dist-new;npm i;npm run start:prod', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/project/server', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new. tgz')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
                     echo 'Credentials SUCCESS'
                 }
             }
