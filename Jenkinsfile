@@ -1,9 +1,6 @@
 pipeline {
     agent any
-    tools {
-        // 定义构建时使用的工具，例如 Node.js
-        nodejs 'node'
-    }
+
     environment {
         // 定义环境变量，例如 Docker 镜像名称
         IMAGE_NAME = 'jasonbourne77666_server'
