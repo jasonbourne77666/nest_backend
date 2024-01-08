@@ -5,8 +5,6 @@ pipeline {
         // 定义环境变量，例如 Docker 镜像名称
         IMAGE_NAME = 'jasonbourne77666_server'
         BUILD_NUMBER = '0.0.1'
-        USERNAME = 'jasonbourne77666@gmail.com'
-        PASSWORD = 'Js123456.'
     }
 
     stages {
