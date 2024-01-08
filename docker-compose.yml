@@ -7,7 +7,7 @@ services:
     image: mysql:8
     ports:
       - '3306:3306'
-    restart: 'always'
+    # restart: 'always'
     environment:
        # 配置root密码
        MYSQL_ROOT_PASSWORD: 'Js123456.'
@@ -23,7 +23,7 @@ services:
   redis:
     image: redis:4.0.1
     container_name: redis-label
-    restart: 'always'
+    # restart: 'always'
     volumes:
       # 服务器上用
       # - /home/docker/redis/datadir:/data
@@ -39,7 +39,7 @@ services:
   docker_jenkins:
     user: root                                 # 为了避免一些权限问题 在这我使用了root
     restart: always                            # 重启方式
-    image: jenkins/jenkins:lts                 # 指定服务所使用的镜像 在这里我选择了 LTS (长期支持)
+    image: jenkins/jenkins:2.426.2                 # 指定服务所使用的镜像 在这里我选择了 LTS (长期支持)
     container_name: jenkins                    # 容器名称
     environment:
        TZ: 'Asia/Shanghai'
@@ -47,6 +47,11 @@ services:
       - 8082:8080                              # 访问Jenkins服务端口
       - 50000:50000
     volumes:                                   # 卷挂载路径
-      - /home/docker/jenkins/jenkins_home/:/var/jenkins_home  # 这是我们一开始创建的目录挂载到容器内的jenkins_home目录
+      # server
+      # - /home/docker/jenkins/jenkins_home/:/var/jenkins_home  # 这是我们一开始创建的目录挂载到容器内的jenkins_home目录
+      # - /var/run/docker.sock:/var/run/docker.sock              # 这是为了在容器内部使用docker命令
+      # - /usr/bin/docker:/usr/bin/docker                        # 这是为了在容器内部使用docker命令
+      # local
+      - /Users/jason/Desktop/docker-copy/jenkins/jenkins_home/:/var/jenkins_home  # 这是我们一开始创建的目录挂载到容器内的jenkins_home目录
       - /var/run/docker.sock:/var/run/docker.sock              # 这是为了在容器内部使用docker命令
       - /usr/bin/docker:/usr/bin/docker                        # 这是为了在容器内部使用docker命令

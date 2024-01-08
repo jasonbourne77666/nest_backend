@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     // 构建 Docker 镜像
-                    sh "docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} ."
+                    // sh "docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} ."
                 }
             }
         }
@@ -36,7 +36,7 @@ pipeline {
                     // sh "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
 
                     // 这里添加部署到服务器的命令或者直接在jenkins上部署
-                    sh "docker run -d -p 3000:3000 --name ${IMAGE_NAME} ${IMAGE_NAME}:${BUILD_NUMBER}"
+                    // sh "docker run -d -p 3000:3000 --name ${IMAGE_NAME} ${IMAGE_NAME}:${BUILD_NUMBER}"
 
                     // 例如，使用 SSH 连接到服务器并更新 Docker 容器
                 }
@@ -46,9 +46,10 @@ pipeline {
 
     post {
         always {
+            sh "node --version"
             // 清理工作，例如删除构建时创建的 Docker 镜像和容器
-            sh "docker container prune -f"
-            sh "docker image prune -f"
+            // sh "docker container prune -f"
+            // sh "docker image prune -f"
         }
         // success {
             // 成功构建后的操作，例如发送通知
