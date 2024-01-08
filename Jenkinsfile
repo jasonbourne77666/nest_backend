@@ -12,6 +12,8 @@ pipeline {
             steps {
             nodejs('node18.19') {
                     sh "node --version"
+                    // 使用npm镜像源
+                    sh "npm config set registry https://registry.npmmirror.com/"
                     // 安装依赖
                     sh "npm install"
                     // 运行构建
