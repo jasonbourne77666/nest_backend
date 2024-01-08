@@ -13,10 +13,14 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                script {
+            nodejs('node18.19') {
                     sh "node --version"
-                    // 构建 Docker 镜像
-                    // sh "docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} ."
+                    // 安装依赖
+                    sh "npm install"
+                    // 运行构建
+                    sh "npm run build"
+                    // 压缩dist-new文件夹
+                    sh "tar -zcvf dist-new.tgz dist-new"
                 }
             }
         }
@@ -30,22 +34,14 @@ pipeline {
         //     }
         // }
 
-        // stage('Deploy') {
-        //     steps {
-        //         script {
-        //             // 登录到 Docker 镜像仓库（如果需要）
-        //             // sh "docker login -u ${USERNAME} -p ${PASSWORD}}"
-
-        //             // 推送 Docker 镜像到仓库
-        //             // sh "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
-
-        //             // 这里添加部署到服务器的命令或者直接在jenkins上部署
-        //             // sh "docker run -d -p 3000:3000 --name ${IMAGE_NAME} ${IMAGE_NAME}:${BUILD_NUMBER}"
-
-        //             // 例如，使用 SSH 连接到服务器并更新 Docker 容器
-        //         }
-        //     }
-        // }
+        stage('Deploy') {
+            steps {
+                script {
+                    sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'node -v', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tgz')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                    echo 'Credentials SUCCESS'
+                }
+            }
+        }
     }
 
     post {
