@@ -37,8 +37,13 @@ pipeline {
             steps {
                 script {
                     // 流水线语法 Exec command
-                    // cd /project/server && pm2 stop server && pm2 delete server && rm -rf dist-new && tar -xzvf dist-new.tar.gz && cd dist-new && npm config set registry https://registry.npmmirror.com/ && npm install --omit-dev && nohup npm run start:prod > /dev/null 2>&1 &
-sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'cd /project/server && pm2 stop server && pm2 delete server && rm -rf dist-new && tar -xzvf dist-new.tar.gz && cd dist-new && npm install --omit-dev  && npm config set registry https:\\/\\/registry.npmmirror.com && nohup npm run start:prod > /dev/null 2>&1 &', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tar.gz')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                    // cd /project/server && pm2 stop server || true && pm2 delete server && rm -rf dist-new && tar -xzvf dist-new.tar.gz && cd dist-new && npm install --omit-dev && nohup npm run start:prod > /dev/null 2>&1 &
+                    sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''pm2 stop server || true
+                    pm2 delete server || true
+                    find /project/server -mindepth 1 -maxdepth 1 ! -name \'node_modules\' -exec rm -rf {} \\;
+                    cd /project/server && tar -xzvf dist-new.tar.gz && cp -R /project/server/dist-new/\\* /project/server
+                    npm install --omit-dev
+                    nohup npm run start:prod''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/server', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tar.gz')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
                     echo 'Credentials SUCCESS'
                 }
             }
