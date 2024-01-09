@@ -38,16 +38,17 @@ pipeline {
                 script {
                     // 流水线语法 Exec command
                     // cd /project/server && pm2 stop server && pm2 delete server && rm -rf dist-new && tar -xzvf dist-new.tar.gz && cd dist-new && npm config set registry https://registry.npmmirror.com/ && npm install --omit-dev && nohup npm run start:prod > /dev/null 2>&1 & exit
-sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''pm2 stop server || true
-pm2 delete server || true
-cd /project/server
-rm -rf dist-new
-tar -xzvf dist-new.tar.gz
-cd dist-new
-npm install --omit-dev 
-pm2 start /dist/main.js --name "server"
-sleep 5
-exit''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/server', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tar.gz', usePty: true)], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                    sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''pm2 stop server || true
+                    pm2 delete server || true
+                    cd /project/server
+                    rm -rf dist-new
+                    tar -xzvf dist-new.tar.gz
+                    cd dist-new
+                    npm install --omit-dev 
+                    pm2 start ./dist/main.js --name "server"
+                    sleep 5
+                    exit''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/server', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tar.gz', usePty: true)], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                    
                     echo 'Credentials SUCCESS'
                 }
             }
