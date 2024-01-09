@@ -45,10 +45,9 @@ pipeline {
                     tar -xzvf dist-new.tar.gz
                     cd dist-new
                     npm install --omit-dev 
-                    nohup npm run start:prod > /dev/null 2>&1 &
+                    pm2 start /dist/main.js --name "server"
                     sleep 5
                     exit;''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/server', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tar.gz', usePty: true, useSftpForExec: true)], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
-                    
                     echo 'Credentials SUCCESS'
                 }
             }
