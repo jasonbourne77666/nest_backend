@@ -13,6 +13,7 @@ pipeline {
             nodejs('node18.19') {
                     sh "node --version"
                     // 安装依赖
+                    // pnpm zai jenkins nodejs插件中安装
                     sh "pnpm install"
                     // 运行构建
                     sh "pnpm run build"
