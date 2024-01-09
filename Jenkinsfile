@@ -12,12 +12,10 @@ pipeline {
             steps {
             nodejs('node18.19') {
                     sh "node --version"
-                    // 使用npm镜像源
-                    sh "npm config set registry https://registry.npmmirror.com/"
                     // 安装依赖
-                    sh "npm install"
+                    sh "pnpm install"
                     // 运行构建
-                    sh "npm run build"
+                    sh "pnpm run build"
                     // 压缩dist-new文件夹
                     sh "tar -zcvf dist-new.tar.gz dist-new"
                 }
@@ -43,19 +41,21 @@ pipeline {
                     // rm -rf dist-new
                     // tar -xzvf dist-new.tar.gz
                     // cd dist-new
-                    // npm install --omit-dev 
-                    // nohup npm run start:prod > /dev/null 2>&1 &
+                    // pnpm install --omit-dev 
+                    // nohup pnpm run start:prod > /dev/null 2>&1 &
                     // sleep 5
                     // exit
-                    
+                    // 流水线语法ssh选项 Exec in pty，Source files：dist-new.tar.gz， Remote directory /server
+
+
                     sshPublisher(publishers: [sshPublisherDesc(configName: 'aliyun_server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''pm2 stop server || true
                     pm2 delete server || true
                     cd /project/server
                     rm -rf dist-new
                     tar -xzvf dist-new.tar.gz
                     cd dist-new
-                    npm install --omit-dev 
-                    nohup npm run start:prod > /dev/null 2>&1 &
+                    pnpm install --prod 
+                    nohup pnpm run start:prod > /dev/null 2>&1 &
                     sleep 5
                     exit''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/server', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist-new.tar.gz', usePty: true)], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
                     
