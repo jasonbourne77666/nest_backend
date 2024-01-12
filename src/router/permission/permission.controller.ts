@@ -63,7 +63,6 @@ export class PermissionController {
   }
 
   @Get(':id')
-  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.permissionService.findOneById(+id);
   }

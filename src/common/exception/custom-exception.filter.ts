@@ -19,7 +19,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse<Response>();
-
+    console.log('exception', exception);
     response
       .json({
         code: exception.getStatus(),

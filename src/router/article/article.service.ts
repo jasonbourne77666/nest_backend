@@ -1,21 +1,70 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindArticleDto } from './dto/find-article.dto';
+import { CreateArticleDto } from './dto/create-article.dto';
+import { UpdateArticleDto } from './dto/update-article.dto';
+import { FindArticleListVo } from './vo/find-article.vo';
 import { Article } from './entities/article.entity';
 import { RedisService } from '../redis/redis.service';
-
+import { Repository, Like } from 'typeorm';
 @Injectable()
 export class ArticleService {
-  @InjectEntityManager()
-  private entityManager: EntityManager;
+  // 注入 Article 实体，
+  @InjectRepository(Article)
+  private readonly articleRepository: Repository<Article>;
 
   @Inject(RedisService)
   private redisService: RedisService;
 
+  async create(createArticleDto: CreateArticleDto) {
+    return await this.articleRepository.save(createArticleDto);
+  }
+
+  async findBlogList(condition: FindArticleDto) {
+    const { title, pageNo = 1, pageSize = 20 } = condition;
+    const newCondition: Record<string, any> = {};
+    if (title) {
+      newCondition.title = Like(`%${title}%`);
+    }
+
+    const [articles, totalCount] = await this.articleRepository.findAndCount({
+      select: [
+        'id',
+        'title',
+        'viewCount',
+        'likeCount',
+        'collectCount',
+        'createTime',
+        'updateTime',
+      ],
+      where: newCondition,
+      skip: (pageNo - 1) * pageSize,
+      take: pageSize,
+    });
+    const vo = new FindArticleListVo();
+    vo.list = articles;
+    vo.totalCount = totalCount;
+    vo.pageNo = pageNo;
+    vo.pageSize = pageSize;
+
+    return vo;
+  }
+
   async findOne(id: number) {
-    return await this.entityManager.findOneBy(Article, {
+    return await this.articleRepository.findOneBy({
       id,
     });
+  }
+
+  async update(updateArticleDto: UpdateArticleDto) {
+    return await this.articleRepository.update(
+      { id: updateArticleDto.id },
+      updateArticleDto,
+    );
+  }
+
+  async remove(id: number) {
+    return await this.articleRepository.delete({ id });
   }
 
   async flushRedisToDB() {
@@ -27,8 +76,7 @@ export class ArticleService {
 
       const [, id] = key.split('_');
 
-      await this.entityManager.update(
-        Article,
+      await this.articleRepository.update(
         {
           id: +id,
         },
@@ -47,8 +95,7 @@ export class ArticleService {
 
       article.viewCount++;
 
-      await this.entityManager.update(
-        Article,
+      await this.articleRepository.update(
         { id },
         {
           viewCount: article.viewCount,
@@ -85,7 +132,7 @@ export class ArticleService {
   }
 
   async initData() {
-    await this.entityManager.save(Article, {
+    await this.articleRepository.save({
       title: '基于 Axios 封装一个完美的双 token 无感刷新',
       content: `用户登录之后，会返回一个用户的标识，之后带上这个标识请求别的接口，就能识别出该用户。
 
@@ -93,7 +140,7 @@ export class ArticleService {
       `,
     });
 
-    await this.entityManager.save(Article, {
+    await this.articleRepository.save({
       title: 'Three.js 手写跳一跳小游戏',
       content: `前几年，跳一跳小游戏火过一段时间。
 
