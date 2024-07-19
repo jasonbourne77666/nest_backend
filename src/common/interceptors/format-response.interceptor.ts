@@ -20,9 +20,6 @@ export class FormatResponseInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data) => {
-        if (context.getType() === ('graphql' as ContextType)) {
-          return data;
-        }
         if (data && data.code) {
           return data;
         }

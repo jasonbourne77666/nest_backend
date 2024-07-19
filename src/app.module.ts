@@ -18,7 +18,6 @@ import { ArticleModule } from './router/article/article.module';
 import { TaskModule } from './task/task.module';
 import { EventsModule } from './router/events/events.module';
 import { UploadModule } from './router/upload/upload.module';
-import { OssModule } from './router/oss/oss.module';
 import { PhoneModule } from './router/phone/phone.module';
 
 // entities
@@ -84,7 +83,6 @@ import { PermissionGuard } from './common/guards/permission.guard';
     TaskModule,
     EventsModule,
     UploadModule,
-    OssModule,
     PhoneModule,
     RoleModule,
     PermissionModule,
